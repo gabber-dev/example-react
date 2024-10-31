@@ -8,12 +8,10 @@ function App() {
   const handleConnect = async () => {
     try {
       // Fetch token from your local server: https://github.com/gabber-dev/example-server/tree/main
-      //const response = await fetch('http://localhost:3000/token');
+      const response = await fetch('http://localhost:3000/token');
 
-      
-      //const data = await response.json();
-      //const token = data.token;
-      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcm9qZWN0IjoiOTI4YTc4NjgtODRlYi00ZjRhLTliNmMtOWNhMzZkZjVjNDJhIiwiaHVtYW4iOiIxMjMiLCJpYXQiOjE3MzAzMzQwODcsImV4cCI6MTczMDQyMDQ4N30.cJ-TGvzqUHCi4Vdm1Z8mK9HRqN2hPR8kaZWt2vLDOAY'
+      const data = await response.json();
+      const token = data.token;
 
       setConnectionOpts({
         token,
