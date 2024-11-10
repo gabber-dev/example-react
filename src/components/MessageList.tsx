@@ -1,7 +1,6 @@
-import React from 'react';
 import { useSession } from 'gabber-client-react';
 
-const MessageList: React.FC = () => {
+export function MessageList() {
   const { messages } = useSession();
 
   return (

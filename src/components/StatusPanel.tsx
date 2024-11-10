@@ -1,18 +1,7 @@
-import React from 'react';
+import { useSession } from 'gabber-client-react';
 
-interface StatusPanelProps {
-  connectionState: string;
-  agentState: string;
-  microphoneEnabled: boolean;
-  setMicrophoneEnabled: (enabled: boolean) => void;
-}
-
-const StatusPanel: React.FC<StatusPanelProps> = ({
-  connectionState,
-  agentState,
-  microphoneEnabled,
-  setMicrophoneEnabled,
-}) => {
+function StatusPanel() {
+  const { connectionState, agentState, microphoneEnabled, setMicrophoneEnabled } = useSession();
   return (
     <div className="status-panel">
       <div className="status-item">

@@ -1,20 +1,11 @@
-import React from 'react';
+import { useSession } from 'gabber-client-react';
+import { useState } from 'react';
 
-interface MessagePanelProps {
-  messages: Array<{ agent: boolean; text: string }>;
-  transcription: { text: string };
-  inputMessage: string;
-  setInputMessage: (message: string) => void;
-  handleSendMessage: () => void;
-}
 
-const MessagePanel: React.FC<MessagePanelProps> = ({
-  messages,
-  transcription,
-  inputMessage,
-  setInputMessage,
-  handleSendMessage,
-}) => {
+export function MessagePanel() {
+  const { messages, transcription, sendChatMessage } = useSession();
+  const [inputMessage, setInputMessage] = useState('');
+
   return (
     <div className="w-1/2 pl-2 border-l border-gray-200 flex flex-col">
       <h4 className="font-fredoka font-semibold text-blue-600 mb-1 text-xs">Messages:</h4>
@@ -33,24 +24,25 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
       
       <div className="p-2 border-t border-gray-200">
         <div className="flex">
-          <input
-            type="text"
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                handleSendMessage();
-              }
-            }}
-            className="flex-grow border-2 border-blue-600 rounded-l px-2 py-1 text-xs text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
-            placeholder="Type a message..."
-          />
-          <button
-            onClick={handleSendMessage}
-            className="bg-[#FF5925] text-white px-2 py-1 rounded-r font-fredoka font-semibold text-xs hover:bg-blue-600 transition-colors"
-          >
-            Send
-          </button>
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            sendChatMessage({ text: inputMessage });
+            setInputMessage('');
+          }}>
+            <input
+              type="text"
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              className="flex-grow border-2 border-blue-600 rounded-l px-2 py-1 text-xs text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
+              placeholder="Type a message..."
+            />
+            <button
+              formAction='submit'
+              className="bg-[#FF5925] text-white px-2 py-1 rounded-r font-fredoka font-semibold text-xs hover:bg-blue-600 transition-colors"
+            >
+              Send
+            </button>
+          </form>
         </div>
       </div>
     </div>
