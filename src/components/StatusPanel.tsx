@@ -1,7 +1,7 @@
-import { useSession } from 'gabber-client-react';
+import { useRealtimeSessionEngine } from 'gabber-client-react';
 
 function StatusPanel() {
-  const { connectionState, agentState, microphoneEnabled, setMicrophoneEnabled } = useSession();
+  const { connectionState, agentState, microphoneEnabled, setMicrophoneEnabled } = useRealtimeSessionEngine();
   return (
     <div className="status-panel">
       <div className="status-item">

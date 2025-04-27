@@ -1,7 +1,7 @@
-import { useSession } from 'gabber-client-react';
+import { useRealtimeSessionEngine } from 'gabber-client-react';
 
 export function MessageList() {
-  const { messages } = useSession();
+  const { messages } = useRealtimeSessionEngine();
 
   return (
     <div className="message-list">

@@ -1,8 +1,8 @@
-import { useSession } from 'gabber-client-react';
+import { useRealtimeSessionEngine } from 'gabber-client-react';
 import React from 'react';
 
 function VolumeVisualizer() {
-  const { agentVolumeBands, userVolumeBands, remainingSeconds } = useSession();
+  const { agentVolumeBands, userVolumeBands, remainingSeconds } = useRealtimeSessionEngine();
   return (
     <div className="flex flex-col">
       <h4 className="font-fredoka font-semibold text-blue-600 mb-1 text-xs">Volume Bands:</h4>

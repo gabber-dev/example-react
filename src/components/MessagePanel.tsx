@@ -1,9 +1,9 @@
-import { useSession } from 'gabber-client-react';
+import { useRealtimeSessionEngine } from 'gabber-client-react';
 import { useState } from 'react';
 
 
 export function MessagePanel() {
-  const { messages, transcription, sendChatMessage } = useSession();
+  const { messages, transcription, sendChatMessage } = useRealtimeSessionEngine();
   const [inputMessage, setInputMessage] = useState('');
 
   return (

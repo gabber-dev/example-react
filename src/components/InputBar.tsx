@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useSession } from 'gabber-client-react';
+import { useRealtimeSessionEngine } from 'gabber-client-react';
 
 const InputBar: React.FC = () => {
   const [message, setMessage] = useState('');
-  const { sendChatMessage, microphoneEnabled, setMicrophoneEnabled } = useSession();
+  const { sendChatMessage, microphoneEnabled, setMicrophoneEnabled } = useRealtimeSessionEngine();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

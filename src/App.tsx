@@ -1,21 +1,21 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { SessionProvider } from 'gabber-client-react'; // Removed Gabber import due to it not being exported
-import { ConnectOptions, Api, Voice } from 'gabber-client-core'; // Added import for ConnectOptions
+import { RealtimeSessionEngineProvider } from 'gabber-client-react'; // Removed Gabber import due to it not being exported
+import { Api, SDKConnectOptionsOneOf1, Voice } from 'gabber-client-core'; // Added import for ConnectOptions
 import Chat from './components/LiveView';
 
-// Gabber LLM
-const LLM = "90d72e7d-8ae2-458c-adb9-074a7fe432c7"
+const GABBER_LLM = "90d72e7d-8ae2-458c-adb9-074a7fe432c7"
 
 function App() {
   const [token, setToken] = useState<string | null>(null);
-  const [sessionConnectOpts, setSessionConnectOpts] = useState<ConnectOptions | null>(null);
-  const [prompt, setPrompt] = useState<string>("");
+  const [sessionConnectOpts, setSessionConnectOpts] = useState<SDKConnectOptionsOneOf1 | null>(null);
+  const [prompt, setPrompt] = useState<string>("You are a helpful assistant.");
   const [voice, setVoice] = useState<string>("");
   const [voices, setVoices] = useState<Voice[]>([]);
+  const [context, setContext] = useState<string>("");
 
   const initialLoad = useCallback(async () => {
     try {
-      if(token) {
+      if (token) {
         return
       }
       const response = await fetch('http://localhost:4000/token', {
@@ -27,22 +27,31 @@ function App() {
       const tokenResp = await response.json();
       setToken(tokenResp.token);
       const api = new Api(tokenResp.token);
-      const voiceResp = await api.getVoices()
-      setVoices(voiceResp.values)
+      const voiceResp = await api.voice.listVoices()
+      setVoices(voiceResp.data.values)
+      const contextResp = await api.llm.createContext({
+        messages: [
+          {
+            role: "system",
+            content: prompt
+          }
+        ]
+      })
+      setContext(contextResp.data.id)
     } catch (error) {
       console.error('Error fetching token:', error);
     }
-  }, [token]);
+  }, [prompt, token]);
 
   useEffect(() => {
     initialLoad();
   }, [initialLoad]);
 
-  if(!token) {
+  if (!token) {
     return <div>Loading...</div>;
   }
 
-  if(!sessionConnectOpts) {
+  if (!sessionConnectOpts) {
     return (
       <div className="flex flex-col">
         <label htmlFor="prompt">Prompt</label>
@@ -63,13 +72,27 @@ function App() {
           ))}
         </select>
         {voice && prompt && (<button onClick={async () => {
-          const connectOpts: ConnectOptions = {
+          const connectOpts: SDKConnectOptionsOneOf1 = {
             token,
-            sessionConnectOptions: {
-              history: [],
-              voice_override: voice,
-              llm: LLM,
-            }
+            config: {
+              "general": {
+                "save_messages": true
+              },
+              "input": {
+                "interruptable": true,
+                "parallel_listening": false
+              },
+              "generative": {
+                "llm": GABBER_LLM,
+                "voice_override": voice,
+                "context": context,
+              },
+              "output": {
+                "stream_transcript": true,
+                "speech_synthesis_enabled": true,
+                "answer_message": "Hello?"
+              }
+            },
           }
           setSessionConnectOpts(connectOpts)
         }}>Start Chat</button>)}
@@ -80,9 +103,9 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-4xl mx-auto">
-        <SessionProvider connectionOpts={sessionConnectOpts}>
-          <Chat  />
-        </SessionProvider>
+        <RealtimeSessionEngineProvider connectionOpts={sessionConnectOpts}>
+          <Chat />
+        </RealtimeSessionEngineProvider>
       </div>
     </div>
   );
